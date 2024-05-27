@@ -4,18 +4,19 @@ import traci
 import matplotlib.pyplot as plt
 from sumolib import checkBinary
 
-# Check for SUMO_HOME and set the path for tools
+# Проверка наличия переменной окружения SUMO_HOME и установка пути для инструментов
+if 'SUMO_HOME' in os.environ:
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
     sys.path.append(tools)
 else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
-# Simulation parameters
-EPISODES = 20  # Number of episodes
-PHASE_DURATION = 15  # Duration for each phase in seconds
+# Параметры симуляции
+EPISODES = 20  # Количество эпизодов
+PHASE_DURATION = 15  # Продолжительность каждой фазы в секундах
 
-# Lists to store results for plotting
+# Списки для хранения результатов для построения графиков
 average_waiting_times = []
 
 def switch_to_next_phase(junctionID):
@@ -48,12 +49,12 @@ def run_simulation():
 
             step += 1
 
-        average_waiting_time = total_waiting_time / (total_vehicles + 1e-6)  # To avoid division by zero
+        average_waiting_time = total_waiting_time / (total_vehicles + 1e-6)  # Деление на 0
         average_waiting_times.append(average_waiting_time)
         traci.close()
         sys.stdout.flush()
 
-    # Plot and save average waiting time per episode
+    # Построение графика и сохранение среднего времени ожидания за эпизод
     plt.plot(range(EPISODES), average_waiting_times)
     plt.xlabel("Episode")
     plt.ylabel("Average Waiting Time per Vehicle (s)")

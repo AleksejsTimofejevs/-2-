@@ -5,30 +5,30 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sumolib import checkBinary
 
-# Check for SUMO_HOME and set the path for tools
+# Проверка наличия переменной окружения SUMO_HOME и установка пути для инструментов
 if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
     sys.path.append(tools)
 else:
     sys.exit("please declare environment variable 'SUMO_HOME'")
 
-# Q-Learning parameters
+# Параметры Q-Learning
 LEARNING_RATE = 0.1
 DISCOUNT = 0.95
 EPSILON = 1.0
 EPSILON_DECAY = 0.995
 MIN_EPSILON = 0.0001
-EPISODES = 20  # Reduced for quick execution, increase as needed
+EPISODES = 20  # Уменьшено для быстрой работы, увеличьте по необходимости
 
-# Define the state and action space
-NUM_ACTIONS = 2  # Two actions: 0 (stay in current phase), 1 (switch to next phase)
-MAX_CARS = 10  # Cap the number of cars at 10 for state representation
+# Определение пространства состояний и действий
+NUM_ACTIONS = 2  # Два действия: 0 (остаться в текущей фазе), 1 (переключиться на следующую фазу)
+MAX_CARS = 10  # Ограничение числа машин до 10 для представления состояния
 
-# Initialize Q-table with a state space of size (11*11*11*11, NUM_ACTIONS)
+# Инициализация Q-таблицы с размером пространства состояний (11*11*11*11, NUM_ACTIONS)
 state_space_size = (MAX_CARS + 1) ** 4
 q_table = np.random.uniform(low=-2, high=0, size=(state_space_size, NUM_ACTIONS))
 
-# Lists to store results for plotting
+# Список для хранения результатов для построения графиков
 average_waiting_times = []
 
 
@@ -106,15 +106,15 @@ def run(train=True):
 
             step += 1
 
-        average_waiting_time = total_waiting_time / (total_vehicles + 1e-6)  # To avoid division by zero
+        average_waiting_time = total_waiting_time / (total_vehicles + 1e-6)  # Деление на 0
         average_waiting_times.append(average_waiting_time)
         traci.close()
         sys.stdout.flush()
 
-    # Save Q-table at the end
+    # Сохранение Q-таблицы в конце
     np.save("q_table.npy", q_table)
 
-    # Plot and save average waiting time per episode
+    # Построение графика и сохранение среднего времени ожидания за эпизод
     plt.plot(range(EPISODES), average_waiting_times)
     plt.xlabel("Episode")
     plt.ylabel("Average Waiting Time per Vehicle (s)")
@@ -124,7 +124,6 @@ def run(train=True):
 
 
 if __name__ == "__main__":
-    # Set train to True for training, False for testing
     train_mode = True
     sumoBinary = checkBinary('sumo-gui' if not train_mode else 'sumo')
     run(train=train_mode)

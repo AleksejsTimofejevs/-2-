@@ -18,9 +18,8 @@ MAX_CARS = 10  # Cap the number of cars at 10 for state representation
 
 # Загрузка Q-Table
 q_table = np.load("q_table.npy")
-
-# Lists to store results for plotting
 average_waiting_times = []
+
 
 def get_state(junctionID):
     lanes = traci.trafficlight.getControlledLanes(junctionID)
@@ -31,8 +30,10 @@ def get_state(junctionID):
     state_index = np.ravel_multi_index(state, (MAX_CARS + 1,) * 4)
     return state_index
 
+
 def choose_action(state):
     return np.argmax(q_table[state])
+
 
 def switch_to_next_phase(junctionID):
     current_phase = traci.trafficlight.getPhase(junctionID)
@@ -41,6 +42,7 @@ def switch_to_next_phase(junctionID):
     next_phase = (current_phase + 1) % total_phases
     traci.trafficlight.setPhase(junctionID, next_phase)
     return next_phase
+
 
 def run_simulation():
     for episode in range(EPISODES):
