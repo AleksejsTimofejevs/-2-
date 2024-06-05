@@ -6,7 +6,6 @@ from sumolib import checkBinary
 
 # Проверка наличия переменной окружения SUMO_HOME и установка пути для инструментов
 if 'SUMO_HOME' in os.environ:
-if 'SUMO_HOME' in os.environ:
     tools = os.path.join(os.environ['SUMO_HOME'], 'tools')
     sys.path.append(tools)
 else:
@@ -27,9 +26,12 @@ def switch_to_next_phase(junctionID):
     traci.trafficlight.setPhase(junctionID, next_phase)
     return next_phase
 
-def run_simulation():
+def run_simulation(train=False):
     for episode in range(EPISODES):
-        traci.start([checkBinary("sumo"), "-c", "SUMO-files/Crossroad.sumo.cfg", "--tripinfo-output", "tripinfo.xml"])
+        if train:
+            traci.start([checkBinary("sumo"), "-c", "SUMO-files/Crossroad.sumo.cfg", "--tripinfo-output", "tripinfo.xml"])
+        else:
+            traci.start([checkBinary("sumo-gui"), "-c", "SUMO-files/Crossroad.sumo.cfg", "--tripinfo-output", "tripinfo.xml"])
 
         step = 0
         total_waiting_time = 0
@@ -63,4 +65,4 @@ def run_simulation():
     plt.show()
 
 if __name__ == "__main__":
-    run_simulation()
+    run_simulation(train=False)
